@@ -2,8 +2,10 @@
 
 ## 1. Team Information
 
-* Name: [Your Name]
-* SRN: [Your SRN]
+* Name: sudhe 
+* SRN: PES1UG24CS695
+* Name:tanisha
+* SRN:PES1UG24CS635
 
 ---
 
