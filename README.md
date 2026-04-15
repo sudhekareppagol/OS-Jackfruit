@@ -8,53 +8,43 @@
 * SRN:PES1UG24CS635
 
 ---
-
-## 2. Build, Load, and Run Instructions
-
-### Build the Project
-
-```
-make clean
+# Build the project
 make
-```
 
-### Load Kernel Module
-
-```
+# Load kernel module
 sudo insmod monitor.ko
-```
 
-### Verify Device
-
-```
+# Verify device
 ls /dev/container_monitor
-```
 
-### Start Container
+# Start supervisor
+sudo ./engine supervisor ./rootfs-base
 
-```
-sudo ./engine start alpha ./rootfs-base /bin/sh
-```
+# Create container root filesystems
+cp -a rootfs-base rootfs-alpha
+cp -a rootfs-base rootfs-beta
 
-### List Containers
+# Start containers (in another terminal)
+sudo ./engine start alpha ./rootfs-alpha /bin/sh
+sudo ./engine start beta ./rootfs-beta /bin/sh
 
-```
+# List containers
 sudo ./engine ps
-```
 
-### View Logs
-
-```
+# View logs
 sudo ./engine logs alpha
-```
 
-### Stop Module
+# Stop containers
+sudo ./engine stop alpha
+sudo ./engine stop beta
 
-```
+# Check kernel logs
+dmesg | tail
+
+# Unload module
 sudo rmmod monitor
-```
-
 ---
+
 
 ## 3. Demo with Screenshots
 
@@ -71,7 +61,6 @@ This project demonstrates container lifecycle management and kernel-level monito
 The kernel module tracks memory usage and logs events.
 User-space engine manages container processes using fork and exec.
 
----
 
 ## 5. Design Decisions and Tradeoffs
 
