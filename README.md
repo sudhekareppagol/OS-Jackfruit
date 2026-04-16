@@ -47,11 +47,17 @@ sudo rmmod monitor
 
 
 ## 3. Demo with Screenshots
+The following demonstrations were performed and corresponding screenshots are provided in the submission PDF:
 
-1. Container start output
-2. ps command output
-3. logs command output
-4. Kernel module loaded (dmesg)
+1.Multi-container supervision – Two containers (alpha and beta) running under a single supervisor
+2.Metadata tracking – Output of engine ps showing container states
+3.Bounded-buffer logging – Logs captured using engine logs
+4.CLI and IPC – Commands interacting with the supervisor
+5.Soft-limit warning – Warning observed in dmesg
+6.Hard-limit enforcement – Container terminated after exceeding memory limit
+7.Scheduling experiment – Difference between CPU-bound and I/O-bound workloads
+8.Clean teardown – No running container processes after shutdown
+
 
 ---
 
