@@ -56,22 +56,71 @@ sudo rmmod monitor
 ---
 
 ## 4. Engineering Analysis
+1. Isolation Mechanisms
 
-This project demonstrates container lifecycle management and kernel-level monitoring.
-The kernel module tracks memory usage and logs events.
-User-space engine manages container processes using fork and exec.
+Containers use process isolation to run independently. In this project, isolation is partially achieved using separate root filesystems (rootfs-alpha, rootfs-beta) and separate processes. Each container runs its own /bin/sh, giving it an independent execution environment. However, since full namespace isolation is not implemented, containers still share the host kernel.
 
+2. Supervisor and Process Lifecycle
+
+A long-running supervisor process is used to manage containers. It starts containers using fork() and exec(), tracks their state, and ensures proper cleanup. This avoids zombie processes and allows multiple containers to run concurrently.
+
+3. IPC, Threads, and Synchronization
+
+The project uses basic IPC through command-line interaction. Logs are handled through a simple bounded-buffer style approach. Since full IPC (like sockets) is not implemented, communication is limited but sufficient for demonstration.
+
+4. Memory Management and Enforcement
+
+The kernel module monitors memory usage and enforces soft and hard limits.
+
+Soft limit → warning is generated
+Hard limit → container is terminated
+This shows how the kernel controls memory usage for processes.
+
+5. Scheduling Behavior
+
+Different workloads (cpu_hog and io_pulse) demonstrate Linux scheduling. CPU-bound processes consume more CPU time, while I/O-bound processes wait frequently, showing how the scheduler balances tasks.
 
 ## 5. Design Decisions and Tradeoffs
+Namespace Isolation
+Choice: Did not implement full namespaces
+Tradeoff: Easier but less isolation
+Reason: Simpler implementation for learning
 
-* Used fork() instead of full namespace isolation → simpler but less realistic
-* Used printf logs instead of full IPC → easier implementation
-* Kernel module kept minimal → easier debugging
+Supervisor Design
+Choice: Single supervisor process
+Tradeoff: Central control but single point of failure
+Reason: Easier container management
+
+IPC / Logging
+Choice: Simple printf/log system
+Tradeoff: Limited communication
+Reason: Easier debugging
+
+Kernel Monitor
+Choice: Minimal kernel module
+Tradeoff: Fewer features
+Reason: Stability and simplicity
+
+Scheduling Experiment
+Choice: Used cpu_hog and io_pulse
+Tradeoff: Basic experiment
+Reason: Clearly shows scheduling differences
 
 ---
 
 ## 6. Scheduler Experiment Results
+Experiment Setup
 
-CPU and memory workload programs demonstrate process behavior under load.
-Memory hog shows increased memory usage.
-CPU hog shows high CPU utilization.
+Two workloads were used:
+
+cpu_hog → CPU-intensive
+io_pulse → I/O-intensive
+
+Observations
+CPU-bound process used high CPU continuously
+I/O-bound process showed lower CPU usage
+Scheduler gave fair time to both processes
+
+Conclusion
+
+Linux scheduler prioritizes fairness and responsiveness. CPU-heavy tasks get more CPU, while I/O tasks wait, demonstrating efficient scheduling.
